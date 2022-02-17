@@ -1,55 +1,66 @@
 int greenLED = 4;
 int redLED = 2;
-int entryButton = 13;
-int exitButton = 12;
-int customerCount;
+int entryButton = 12;
+int exitButton = 13;
+int entrybuttonState = 0;
+int lastentryButtonState = 0;
+int exitbuttonState = 0;
+int lastexitButtonState = 0;
+int customerCount = 0;
 int customerLimit = 5;
 
 void setup() {
   Serial.begin(9600);
-  // initialize the pushbutton pin as an input:
+
   pinMode(entryButton, INPUT_PULLUP);
   pinMode(exitButton, INPUT_PULLUP);
   
-  // initialize the LED pin as an output:
-  pinMode(greenLED, OUTPUT);     // green light
-  pinMode(redLED, OUTPUT);       // red light
+  pinMode(greenLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
 }
 
 void loop()
-{   
+{
   digitalWrite(greenLED, LOW);
   digitalWrite(redLED, LOW);
 
-  if(digitalRead(entryButton) == HIGH)
-  {
+  entrybuttonState = digitalRead(entryButton);
+  exitbuttonState = digitalRead(exitButton);
     
-    //If current customer count is greater or equal to max allowance, turn on the red LED.
-    if(customerCount > customerLimit)
+  if(entrybuttonState != lastentryButtonState)
+  {
+    if(entrybuttonState == HIGH)
     {
-      digitalWrite(4, LOW);
-      digitalWrite(2, HIGH);
+      if(customerCount >= customerLimit)
+      {
+        digitalWrite(greenLED, LOW);
+        digitalWrite(redLED, HIGH);
+      }
+      else
+      {
+        digitalWrite(greenLED, HIGH);
+        digitalWrite(redLED, LOW);
+        customerCount += 1;
+        Serial.println("- 1 customer enter the shop, remaining customers:");
+        //Serial.println(customerCount);
+        delay(2000);
+      }
+    
     }
-    //If current customer count is lower or equal to max allowance, turn on the green LED.
-    else
+  }
+  entrybuttonState = lastentryButtonState;
+    
+  if(exitbuttonState != lastexitButtonState)
+  {
+    if(digitalRead(exitButton) == HIGH)
     {
-      digitalWrite(4, HIGH);
-      digitalWrite(2, LOW);
-      customerCount++;
-      Serial.println("- 1 customer enter the shop");
+      Serial.println(digitalRead(exitButton));
+      customerCount--;
+      Serial.println("- 1 customer left the shop, remaining customers:");
       //Serial.println(customerCount);
       delay(2000);
-    }
-    
+    }        
   }
-
-  else if(digitalRead(exitButton) == HIGH)
-  {
-    Serial.println(digitalRead(exitButton));
-    customerCount--;
-    Serial.println("- 1 customer left the shop");
-    //Serial.println(customerCount);
-    delay(2000);
-  }
+  exitbuttonState != lastexitButtonState;
   Serial.println(customerCount);
 }
