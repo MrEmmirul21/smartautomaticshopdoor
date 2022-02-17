@@ -17,20 +17,20 @@ void setup() {
 }
 
 void loop()
-{
-   //If current customer count is greater or equal to max allowance, turn on the red LED.
+{   
   digitalWrite(greenLED, LOW);
   digitalWrite(redLED, LOW);
 
-
   if(digitalRead(entryButton) == HIGH)
   {
-    Serial.println(digitalRead(entryButton));
+    
+    //If current customer count is greater or equal to max allowance, turn on the red LED.
     if(customerCount > customerLimit)
     {
       digitalWrite(4, LOW);
       digitalWrite(2, HIGH);
     }
+    //If current customer count is lower or equal to max allowance, turn on the green LED.
     else
     {
       digitalWrite(4, HIGH);
