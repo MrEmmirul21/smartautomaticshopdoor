@@ -1,13 +1,12 @@
-int greenLED = 4;
-int redLED = 2;
-int entryButton = 12;
-int exitButton = 13;
+int entryButton = 13;
+int exitButton = 12;
 int entrybuttonState = 0;
 int lastentryButtonState = 0;
 int exitbuttonState = 0;
 int lastexitButtonState = 0;
 int customerCount = 0;
 int customerLimit = 5;
+int no=0;
 
 void setup() {
   Serial.begin(9600);
@@ -15,15 +14,12 @@ void setup() {
   pinMode(entryButton, INPUT_PULLUP);
   pinMode(exitButton, INPUT_PULLUP);
   
-  pinMode(greenLED, OUTPUT);
-  pinMode(redLED, OUTPUT);
+  pinMode(4,OUTPUT);
+  pinMode(2,OUTPUT);
 }
 
 void loop()
 {
-  digitalWrite(greenLED, LOW);
-  digitalWrite(redLED, LOW);
-
   entrybuttonState = digitalRead(entryButton);
   exitbuttonState = digitalRead(exitButton);
     
@@ -33,34 +29,41 @@ void loop()
     {
       if(customerCount >= customerLimit)
       {
-        digitalWrite(greenLED, LOW);
-        digitalWrite(redLED, HIGH);
+        digitalWrite(4, LOW);
+        digitalWrite(2, HIGH);
+        tone(8, 1000, 2000);
+        
+        digitalWrite(4,LOW);
+        digitalWrite(2,LOW);
       }
       else
       {
-        digitalWrite(greenLED, HIGH);
-        digitalWrite(redLED, LOW);
+        digitalWrite(4, HIGH);
+        digitalWrite(2, LOW);
         customerCount += 1;
-        Serial.println("- 1 customer enter the shop, remaining customers:");
-        //Serial.println(customerCount);
-        delay(2000);
+
+        Serial.print("\n A customer ENTER the shop, total customers: ");
+        Serial.println(customerCount);
+        delay(1000);
+        digitalWrite(4,LOW);
+        digitalWrite(2,LOW);
       }
-    
     }
   }
   entrybuttonState = lastentryButtonState;
     
   if(exitbuttonState != lastexitButtonState)
   {
-    if(digitalRead(exitButton) == HIGH)
+    if(exitbuttonState == HIGH && customerCount > 0)
     {
-      Serial.println(digitalRead(exitButton));
+      digitalWrite(4,LOW);
+      digitalWrite(2,LOW);      
       customerCount--;
-      Serial.println("- 1 customer left the shop, remaining customers:");
-      //Serial.println(customerCount);
-      delay(2000);
+      Serial.print("\n A customer LEFT the shop, remaining customers: ");
+      Serial.println(customerCount);
+      delay(1000);
     }        
   }
-  exitbuttonState != lastexitButtonState;
+  exitbuttonState = lastexitButtonState;
   Serial.println(customerCount);
 }
